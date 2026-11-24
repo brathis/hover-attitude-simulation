@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hover Trim Lab — Longitudinal CG & Cyclic</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<main>
+  <header>
+    <div><p class="eyebrow">Teaching and Learning 2026 · hover trim lab</p><h1>How does longitudinal CG affect cyclic?</h1><p class="sub">Move the CG fore or aft to see how fuselage pitch and cyclic combine to trim the hover.</p></div>
+    <nav class="navlinks" aria-label="Simulation view"><a class="badge" href="index.html" aria-current="page">LONGITUDINAL</a><a class="badge" href="lateral.html">LATERAL</a></nav>
+  </header>
+  <div class="layout">
+    <section class="visuals" aria-label="Helicopter and cyclic illustrations">
+      <article class="panel"><div class="panel-head"><span class="panel-title">01 / Helicopter · side view</span><span class="micro" id="motionLabel">Hover held</span></div>
+        <svg class="scene" id="heliScene" viewBox="0 0 760 320" role="img" aria-label="Side view of helicopter showing center of gravity, gravity, and rotor thrust">
+          <defs>
+            <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#b7d2c6"/><stop offset="1" stop-color="#d8dfc7"/></linearGradient>
+            <pattern id="terrain" width="120" height="70" patternUnits="userSpaceOnUse"><path d="M0 47 Q20 31 42 46 T83 42 T120 48" fill="none" stroke="#687d62" stroke-width="2" opacity=".42"/><path d="M15 70V57m8 13V53m72 17V60m9 10V55" stroke="#829270" stroke-width="2" opacity=".45"/><circle cx="55" cy="20" r="2" fill="#83906e" opacity=".45"/></pattern>
+            <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#cf633d"/></marker>
+            <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#3986a0"/></marker>
+            <marker id="arrowLime" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#708d39"/></marker>
+          </defs>
+          <rect width="760" height="320" fill="url(#sky)"/>
+          <g id="clouds" fill="#f3f4e9" opacity=".84">
+            <g id="cloudBase">
+              <path d="M56 91c0-9 8-16 18-16 3-13 14-22 28-22 13 0 24 8 28 20 11-2 21 6 21 17 0 10-8 17-19 17H75C64 107 56 100 56 91Z"/>
+              <path d="M424 73c0-8 7-14 15-14 3-11 12-18 23-18 12 0 21 7 24 17 10-2 18 5 18 14 0 9-7 15-16 15h-48c-9 0-16-6-16-14Z" opacity=".72"/>
+            </g>
+            <use href="#cloudBase" x="-760"/>
+            <use href="#cloudBase" x="760"/>
+          </g>
+          <g id="world">
+            <g id="worldBase">
+              <path d="M0 214 Q124 194 245 211T491 208T760 214V320H0Z" fill="#98ac83"/>
+              <rect x="0" y="212" width="760" height="108" fill="url(#terrain)"/>
+              <path d="M0 263 Q150 252 300 264T600 256T760 263" fill="none" stroke="#718264" stroke-width="2" opacity=".7"/>
+              <line x1="0" y1="214" x2="760" y2="214" stroke="#58705e" stroke-width="1" stroke-dasharray="5 7" opacity=".7"/>
+            </g>
+            <use href="#worldBase" x="-760"/>
+            <use href="#worldBase" x="760"/>
+          </g>
+          <g id="heli" transform="translate(0 0)">
+            <g id="fuselage" transform="rotate(0 380 157)">
+              <!-- tail boom and tail -->
+              <path d="M343 148 L205 133 L187 139 L337 160Z" fill="#40575a" stroke="#26383a" stroke-width="2"/>
+              <path d="M198 134 L187 109 L178 109 L182 144 L195 149Z" fill="#587073" stroke="#26383a" stroke-width="2"/>
+              <path d="M184 124L160 117M184 124L165 136" stroke="#293b3d" stroke-width="3"/>
+              <!-- cabin -->
+              <path d="M332 147 Q338 112 377 106 L440 111 Q468 116 476 147 L462 166 L343 167Z" fill="#668982" stroke="#26383a" stroke-width="2.5"/>
+              <path d="M355 119 Q372 111 389 112L385 143L348 143Z" fill="#abc9c2" stroke="#365353" stroke-width="1.5"/>
+              <path d="M394 113L435 117Q450 120 457 143L391 143Z" fill="#bad5cf" stroke="#365353" stroke-width="1.5"/>
+              <path d="M347 151 L461 151" stroke="#d4cf9d" stroke-width="4"/>
+              <path d="M351 165 L451 165" stroke="#243537" stroke-width="3"/>
+              <!-- skids -->
+              <path d="M360 165L351 187M445 165L454 187M338 187Q399 195 466 187" fill="none" stroke="#283b3d" stroke-width="4" stroke-linecap="round"/>
+              <!-- mast and hub -->
+              <path d="M401 111L401 80" stroke="#35484a" stroke-width="5"/>
+              <circle cx="401" cy="80" r="6" fill="#293a3b" stroke="#d7dfc9" stroke-width="2"/>
+              <!-- rotor plane and blade rotate around hub; angle shown as line -->
+              <g id="rotor" transform="rotate(0 401 80)"><path d="M214 80L587 80" stroke="#34484a" stroke-width="5" stroke-linecap="round"/><path d="M214 80L587 80" stroke="#91a49a" stroke-width="1" opacity=".6"/></g>
+              <!-- CG and gravity act from CG -->
+              <circle id="cgDot" cx="401" cy="173" r="7" fill="#d88952" stroke="#fff0d9" stroke-width="2"/>
+              <text id="cgText" x="416" y="181" fill="#744b30" font-size="12" font-weight="700">CG</text>
+            </g>
+            <!-- thrust vector and its line of action are world-vertical for the hover trim model -->
+            <line id="weightArrow" x1="401" y1="185" x2="401" y2="239" stroke="#cf633d" stroke-width="4" marker-end="url(#arrowOrange)"/>
+            <text id="weightLabel" x="412" y="231" fill="#8b4c31" font-size="12" font-weight="700">WEIGHT</text>
+            <line id="thrustLine" x1="401" y1="18" x2="401" y2="285" stroke="#3986a0" stroke-width="2" stroke-dasharray="3 7" opacity=".75"/>
+            <line id="thrustArrow" x1="401" y1="76" x2="401" y2="23" stroke="#3986a0" stroke-width="4" marker-end="url(#arrowBlue)"/>
+            <text id="thrustLabel" x="411" y="39" fill="#28697f" font-size="12" font-weight="700">THRUST</text>
+          </g>
+          <g transform="translate(18 20)"><rect width="168" height="47" rx="8" fill="#edf0df" opacity=".9"/><circle cx="16" cy="16" r="4" fill="#cf633d"/><text x="28" y="20" fill="#394847" font-size="11">Weight at CG</text><path d="M12 35h10" stroke="#3986a0" stroke-width="2" stroke-dasharray="2 3"/><text x="28" y="39" fill="#394847" font-size="11">Main rotor thrust line</text></g>
+        </svg>
+      </article>
+      <article class="panel"><div class="panel-head"><span class="panel-title">02 / Cyclic · side view</span><span class="micro">Cyclic position ↔ rotor tilt</span></div>
+        <svg class="scene scene-bottom" viewBox="0 0 760 160" role="img" aria-label="Side view of cyclic stick and rotor disk, with current fore and aft cyclic positions">
+          <defs><marker id="cycArrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#c6e86d"/></marker></defs>
+          <path d="M0 128H760" stroke="#3d4d4e" stroke-width="1"/><path d="M0 131H760" stroke="#263436" stroke-width="22" opacity=".65"/>
+          <g opacity=".55" stroke="#8a9a8c" stroke-width="2"><path d="M85 130l-8 9m26-9l-8 9m26-9l-8 9m540-9l-8 9m26-9l-8 9m26-9l-8 9"/></g>
+          <!-- side silhouette of cockpit floor and pilot hand -->
+          <path d="M296 104Q340 90 386 95L455 100L484 112L480 124H285Z" fill="#506568" stroke="#34494a" stroke-width="2"/>
+          <path d="M312 105L323 78L375 72L412 97" fill="none" stroke="#26383a" stroke-width="8" stroke-linecap="round"/>
+          <path d="M315 77q-4-12 9-18l19-4q9 0 12 7l-4 13-25 10Z" fill="#d7b697" stroke="#594d40" stroke-width="2"/>
+          <circle cx="326" cy="119" r="8" fill="#252f30"/><path d="M301 120H350" stroke="#202a2b" stroke-width="5"/>
+          <g id="cyclicStick" transform="rotate(0 326 119)"><path d="M326 117L326 63" stroke="#ced8c6" stroke-width="5" stroke-linecap="round"/><path d="M318 63Q326 57 334 63L332 69H320Z" fill="#c6e86d" stroke="#263435" stroke-width="2"/></g>
+          <!-- trim gauge -->
+          <path d="M145 69H615" stroke="#61716e" stroke-width="1"/><path d="M145 65v9m470-9v9M380 61v16" stroke="#81918a" stroke-width="1"/>
+          <text x="145" y="54" fill="#aab8af" font-size="11" text-anchor="middle">AFT</text><text x="615" y="54" fill="#aab8af" font-size="11" text-anchor="middle">FORWARD</text>
+          <line id="cyclicIndicator" x1="380" y1="62" x2="380" y2="78" stroke="#c6e86d" stroke-width="3" marker-end="url(#cycArrow)"/>
+          <text id="cyclicReadout" x="380" y="35" fill="#d3eba0" font-size="12" font-weight="700" text-anchor="middle">CENTERED · 0.0°</text>
+          <text x="532" y="115" fill="#8fa09b" font-size="10">stick position ↔ rotor tilt</text>
+        </svg>
+      </article>
+    </section>
+    <aside class="panel controls" aria-label="Simulation controls">
+      <h2>Set up the hover</h2>
+      <div class="control-block">
+        <div class="label-row"><label for="cgSlider">Longitudinal center of gravity</label><output class="value" id="cgValue">0 · datum</output></div>
+        <div class="range-wrap">
+          <input id="cgSlider" type="range" min="-180" max="180" value="0" step="1" aria-label="Move center of gravity from aft to forward; controllability limits are marked">
+          <span class="limit-marker" id="aftLimit" aria-hidden="true"><i></i>AFT LIMIT</span>
+          <span class="limit-marker" id="forwardLimit" aria-hidden="true"><i></i>FORWARD LIMIT</span>
+        </div>
+        <div class="limit-note">Controllability limits at ±15° cyclic travel</div>
+        <div class="range-ends"><span>AFT</span><span>ROTOR HUB</span><span>FORWARD</span></div>
+      </div>
+      <div class="control-block">
+        <div class="switch-row"><div><div class="label">Hover autopilot</div><p>Finds cyclic trim and holds the hover point</p></div><input id="autopilot" class="toggle" type="checkbox" checked aria-label="Hover autopilot on or off"></div>
+        <div class="button-row"><button class="button" id="resetBtn" type="button">Reset to datum</button><button class="button" id="centerBtn" type="button">Center CG</button></div>
+      </div>
+      <div class="control-block" id="manualBlock" hidden>
+        <div class="label-row"><label for="cyclicSlider">Manual longitudinal cyclic</label><output class="value" id="manualValue">0.0°</output></div>
+        <input id="cyclicSlider" type="range" min="-15" max="15" value="0" step="0.1" aria-label="Manual fore and aft cyclic">
+        <div class="range-ends"><span>AFT</span><span>NEUTRAL</span><span>FORWARD</span></div>
+      </div>
+      <div class="control-block wide">
+        <div class="readouts"><div class="readout"><span>Trim cyclic</span><strong id="trimValue">0.0°</strong></div><div class="readout"><span>Pitch · nose-down +</span><strong id="pitchValue">0.0°</strong></div><div class="readout"><span>Fore/aft speed</span><strong id="speedValue">0.0 m/s</strong></div><div class="readout"><span>Net fore/aft acceleration</span><strong id="accelValue">0.0 m/s²</strong></div></div>
+      </div>
+      <div class="control-block wide"><div class="lesson" id="lesson"><b>At datum:</b> the CG is directly beneath the rotor hub. The hover trim cyclic is centered.</div></div>
+      <div class="footnote wide">Teaching model: fore/aft trim and motion are slowed for clarity. Horizontal acceleration is the thrust vector’s horizontal component; speed is integrated over time and the textured world scrolls opposite travel. Height is fixed; lateral cyclic, collective, and pedals are not modeled.</div>
+    </aside>
+  </div>
+</main>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const cgSlider = $('cgSlider'), cyclicSlider = $('cyclicSlider'), autopilot = $('autopilot');
+  const fuselage = $('fuselage'), rotor = $('rotor');
+  const cgDot = $('cgDot'), cgText = $('cgText'), weightArrow = $('weightArrow'), weightLabel = $('weightLabel');
+  const thrustLine = $('thrustLine'), thrustArrow = $('thrustArrow'), thrustLabel = $('thrustLabel');
+  const cyclicStick = $('cyclicStick'), cyclicIndicator = $('cyclicIndicator');
+  const cgPixelsPerStep = 0.22;
+  const cgHeight = 93;
+  const maxCyclic = 15;
+  const maxPitch = 28;
+  const gravity = 9.81;
+  const pixelsPerMeter = 18;
+  const controllabilityLimit = Math.tan(maxCyclic * Math.PI / 180) * cgHeight / cgPixelsPerStep;
+  $('aftLimit').style.left = `${(180 - controllabilityLimit) / 360 * 100}%`;
+  $('forwardLimit').style.left = `${(180 + controllabilityLimit) / 360 * 100}%`;
+  let trim = 0, pitch = 0, pitchRate = 0, horizontalVelocity = 0, horizontalPosition = 0, hoverTargetPosition = 0;
+  let horizontalAcceleration = 0, sceneOffset = 0, pidIntegral = 0, lastTime = performance.now();
+  const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+  function updateReadouts() {
+    const cg = Number(cgSlider.value), trimDeg = trim;
+    $('cgValue').textContent = cg === 0 ? '0 · datum' : `${cg > 0 ? '+' : ''}${cg} · ${cg < 0 ? 'aft' : 'forward'}`;
+    $('trimValue').textContent = `${trimDeg >= 0 ? '+' : ''}${trimDeg.toFixed(1)}°`;
+    $('pitchValue').textContent = `${pitch >= 0 ? '+' : ''}${pitch.toFixed(1)}°`;
+    $('speedValue').textContent = `${horizontalVelocity >= 0 ? '+' : ''}${horizontalVelocity.toFixed(1)} m/s ${Math.abs(horizontalVelocity) < .05 ? '· hover' : horizontalVelocity > 0 ? '· forward' : '· aft'}`;
+    $('accelValue').textContent = `${horizontalAcceleration >= 0 ? '+' : ''}${horizontalAcceleration.toFixed(2)} m/s²`;
+    $('manualValue').textContent = `${Number(cyclicSlider.value) >= 0 ? '+' : ''}${Number(cyclicSlider.value).toFixed(1)}°`;
+    const cgX = 401 + cg * cgPixelsPerStep;
+    cgDot.setAttribute('cx', cgX); cgText.setAttribute('x', cgX + (cg > 55 ? -25 : 15));
+    const a = pitch * Math.PI / 180;
+    const localCgX = cgX;
+    const worldCgX = 380 + (localCgX - 380) * Math.cos(a) - (173 - 157) * Math.sin(a);
+    const worldCgY = 157 + (localCgX - 380) * Math.sin(a) + (173 - 157) * Math.cos(a);
+    weightArrow.setAttribute('x1', worldCgX); weightArrow.setAttribute('y1', worldCgY + 8);
+    weightArrow.setAttribute('x2', worldCgX); weightArrow.setAttribute('y2', worldCgY + 58);
+    $('weightLabel').setAttribute('x', worldCgX + (cg > 55 ? -74 : 11));
+    $('weightLabel').setAttribute('y', worldCgY + 54);
+    // Positive cyclic means forward disk tilt; negative cyclic means aft disk tilt.
+    const diskAngle = trimDeg;
+    rotor.setAttribute('transform', `rotate(${diskAngle} 401 80)`);
+    $('cyclicReadout').textContent = `${trimDeg > .05 ? 'FORWARD' : trimDeg < -.05 ? 'AFT' : 'CENTERED'} · ${trimDeg >= 0 ? '+' : ''}${trimDeg.toFixed(1)}°`;
+    cyclicStick.setAttribute('transform', `rotate(${trimDeg * 1.2} 326 119)`);
+    const ix = 380 + trimDeg * 15;
+    cyclicIndicator.setAttribute('x1', ix); cyclicIndicator.setAttribute('x2', ix);
+    // The force line stays vertical in the level-hover trim reference. Pitch motion is transient only.
+    const radians = (pitch + diskAngle) * Math.PI / 180;
+    const hubAngle = pitch * Math.PI / 180;
+    const hubX = 380 + (401-380)*Math.cos(hubAngle) - (80-157)*Math.sin(hubAngle);
+    const hubY = 157 + (401-380)*Math.sin(hubAngle) + (80-157)*Math.cos(hubAngle);
+    const nx = Math.sin(radians), ny = -Math.cos(radians);
+    thrustLine.setAttribute('x1', hubX-nx*230); thrustLine.setAttribute('y1', hubY-ny*230);
+    thrustLine.setAttribute('x2', hubX+nx*230); thrustLine.setAttribute('y2', hubY+ny*230);
+    thrustArrow.setAttribute('x1', hubX); thrustArrow.setAttribute('y1', hubY);
+    thrustArrow.setAttribute('x2', hubX+nx*54); thrustArrow.setAttribute('y2', hubY+ny*54);
+    thrustLabel.setAttribute('x', hubX+nx*61+7); thrustLabel.setAttribute('y', hubY+ny*61+4);
+    const requiredCyclic = -Math.atan((cg * cgPixelsPerStep) / cgHeight) * 180 / Math.PI;
+    const outsideLimit = Math.abs(requiredCyclic) > maxCyclic + .01;
+    if (outsideLimit) {
+      const direction = requiredCyclic < 0 ? 'aft' : 'forward';
+      const accelerationDirection = cg < 0 ? 'aft' : 'forward';
+      const consequence = autopilot.checked
+        ? `The cyclic is at its stop. The remaining rotor tilt creates ${accelerationDirection} acceleration, and the autopilot cannot hold position.`
+        : `Even full cyclic travel cannot align thrust through the CG; the remaining rotor tilt accelerates the helicopter ${accelerationDirection}.`;
+      $('lesson').innerHTML = `<b>Beyond the controllability limit:</b> this CG position needs ${Math.abs(requiredCyclic).toFixed(1)}° ${direction} cyclic, beyond the ±${maxCyclic}° travel. ${consequence}`;
+    }
+    else if (Math.abs(cg) < 1 && autopilot.checked) $('lesson').innerHTML = '<b>At datum:</b> the CG is directly beneath the rotor hub. The hover trim cyclic is centered.';
+    else if (Math.abs(cg) < 1) $('lesson').innerHTML = Math.abs(trimDeg) > .1
+      ? `<b>Manual cyclic:</b> ${trimDeg > 0 ? 'Forward' : 'Aft'} tilt gives thrust a horizontal component. Speed accumulates while tilted; opposite cyclic is needed to decelerate.`
+      : '<b>Manual cyclic:</b> with cyclic neutral, any existing forward or aft speed continues. Tilt thrust the opposite way to slow down.';
+    else {
+      const side = cg < 0 ? 'aft' : 'forward';
+      const control = cg < 0 ? 'forward' : 'aft';
+      $('lesson').innerHTML = autopilot.checked
+        ? `<b>CG ${side} of the hub:</b> in a steady hover the fuselage pitches until the CG is beneath the hub. The autopilot uses ${control} cyclic to keep the rotor plane level, so thrust stays vertical through the CG.`
+        : `<b>Manual, no corrective input:</b> with the CG ${side} of the hub, thrust does not pass through the CG. The resulting moment rotates the nose ${cg > 0 ? 'down' : 'up'}; apply ${control} cyclic to recover the hover.`;
+    }
+  }
+  function frame(now) {
+    const dt = clamp((now-lastTime)/1000,0,.05); lastTime = now;
+    const cg = Number(cgSlider.value);
+    const pitchTarget = Math.atan((cg * cgPixelsPerStep) / cgHeight) * 180 / Math.PI;
+    const outsideLimit = Math.abs(pitchTarget) > maxCyclic + .01;
+    // Outer-loop position/velocity hold asks for a small tilt to cancel horizontal drift.
+    const desiredWorldAngle = autopilot.checked
+      ? clamp(-horizontalVelocity * 4 - (horizontalPosition - hoverTargetPosition) * .8, -8, 8)
+      : 0;
+    const error = desiredWorldAngle - (pitch + trim);
+    pidIntegral = clamp(pidIntegral + error * dt, -5, 5);
+    const target = autopilot.checked
+      ? clamp(desiredWorldAngle - pitch + error * .16 + pidIntegral * .035 - pitchRate * .20, -15, 15)
+      : Number(cyclicSlider.value);
+    const blend = 1 - Math.exp(-dt * 1.25); // deliberately slow cyclic-servo motion
+    trim += (target-trim)*blend;
+    // With no pilot correction, a forward CG produces a slow nose-down pitch response.
+    // In the teaching model the fuselage settles at the attitude that places CG below hub.
+    const manualPitchTarget = pitchTarget + (autopilot.checked ? 0 : trim * .18);
+    const pitchAccel = ((manualPitchTarget-pitch) * .55 - pitchRate * 1.05);
+    pitchRate += pitchAccel * dt;
+    // Fuselage attitude may continue past the cyclic stop. That leaves a residual
+    // rotor-plane angle, which produces horizontal thrust and motion beyond the limit.
+    pitch = clamp(pitch + pitchRate * dt,-maxPitch,maxPitch);
+    // Thrust magnitude equals weight; its horizontal component is g·sin(world angle).
+    const worldAngle = (pitch + trim) * Math.PI / 180;
+    horizontalAcceleration = gravity * Math.sin(worldAngle);
+    horizontalVelocity += horizontalAcceleration * dt;
+    horizontalPosition += horizontalVelocity * dt;
+    // The aircraft stays centered while the tiled world moves opposite its displacement.
+    sceneOffset = ((horizontalPosition * pixelsPerMeter) % 760 + 760) % 760;
+    $('world').setAttribute('transform', `translate(${-sceneOffset} 0)`);
+    const cloudOffset = ((horizontalPosition * pixelsPerMeter * .28) % 760 + 760) % 760;
+    $('clouds').setAttribute('transform', `translate(${-cloudOffset} 0)`);
+    fuselage.setAttribute('transform',`rotate(${pitch} 380 157)`);
+    $('motionLabel').textContent = outsideLimit
+      ? (autopilot.checked ? 'Cyclic limit · hover not held' : 'CG beyond control range')
+      : autopilot.checked
+        ? (Math.abs(target-trim)<.18 && Math.abs(pitch-pitchTarget)<.2 && Math.abs(horizontalVelocity)<.1 ? 'Hover held' : 'Settling into hover…')
+        : 'Manual cyclic · hover drifts';
+    updateReadouts(); requestAnimationFrame(frame);
+  }
+  cgSlider.addEventListener('input', updateReadouts);
+  cyclicSlider.addEventListener('input', updateReadouts);
+  autopilot.addEventListener('change', () => {
+    $('manualBlock').hidden = autopilot.checked;
+    if (autopilot.checked) {
+      // Capture the current hover point for a bumpless manual-to-auto handoff.
+      hoverTargetPosition = horizontalPosition;
+      pidIntegral = 0;
+    } else {
+      cyclicSlider.value = trim.toFixed(1);
+      pidIntegral = 0;
+    }
+  });
+  $('centerBtn').addEventListener('click', () => { cgSlider.value = 0; updateReadouts(); });
+  $('resetBtn').addEventListener('click', () => { cgSlider.value=0; cyclicSlider.value=0; autopilot.checked=true; $('manualBlock').hidden=true; trim=0; pitch=0; pitchRate=0; horizontalVelocity=0; horizontalPosition=0; hoverTargetPosition=0; horizontalAcceleration=0; pidIntegral=0; sceneOffset=0; $('world').setAttribute('transform','translate(0 0)'); $('clouds').setAttribute('transform','translate(0 0)'); updateReadouts(); });
+  updateReadouts(); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
